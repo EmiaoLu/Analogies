@@ -12,77 +12,53 @@ import jxl.write.Number;
 import jxl.write.biff.RowsExceededException;
 import java.util.ArrayList;
 import java.util.*;
-//    double sum;
-//    double sum1;
-//    public static int Ncs;
-//    public static int top;
-//    public static int top1=16;
-//    double[] Vlaw = new double[Ncs];
-//    double[] Xhat = new double[Ncs];
-//    double[][][] Vars = new double[3][4][Ncs];
-//    double[][][] Dist = new double[6][4][Ncs];
-//    double ifault = 0;
-//    static double extreme = 9999.0;
-//    int No=Integer.parseInt( args[0]);
-//    int rep=Integer.parseInt( args[1]);
-//    int number=Integer.parseInt(args[2]);
-//    int jj=Integer.parseInt( args[3]);
-//    int weight=Integer.parseInt(ar
 
-
- public class Main extends Thread{
+ public class Main{
      
-    private void run(int ind){
-   
+     
+     
+        public static void main(String[] args){
+            
         String scenario="MSKF";
-        int option=2;
-        int top;
-        double sum;
-        double sum1;
+        int option=Integer.parseInt( args[0]);
+        int IND=Integer.parseInt( args[1]);
+        int REP=Integer.parseInt( args[2]);
+        int START_F=Integer.parseInt(args[3]);
+        int END_F=Integer.parseInt(args[4]);
+        int top1=Integer.parseInt(args[5]);
+        int LENGTH=Integer.parseInt( args[6]);
+        int WEIGHT=Integer.parseInt(args[7]);
+//        int IND=2;
+//        int REP=2;
+//        int START_F=16;
+//        int END_F=17;
+//        int top1=16;
+//        int LENGTH=1;
+//        int WEIGHT=1;
+            
         int Ncs=0;
-
-        double[] Xhat = new double[Ncs];
+        int top;
         double[][][] Vars = new double[3][4][Ncs];
         double[][][] Dist = new double[6][4][Ncs];
+        double[] Xhat = new double[Ncs];
         double ifault = 0;
-        double extreme = 9999.0;
         double[] Pie = { 0.9, 0.003, 0.003, 0.094 };
 
         String length = "temp_results";
-        
-        /*
-         Number of replicates for the experiments
-         */
-        
-            for(int rep=1;rep<31;rep++){
+            
+            for(int ind=1;ind<IND;ind++){
                 
-                
-                /*
-                Number of forecasts for the experiments
-                 */
-                
-                    for(int forecast_times=6;forecast_times<7;forecast_times++){
+             for(int rep=1;rep<REP;rep++){
+                 
+                for(int forecast_times=START_F;forecast_times<END_F;forecast_times++){
                         
-                        /*
-                        The T point
-                         */
-                        
-                        for(int top1=16;top1<17;top1++){
+                    
+                            for(int jj=0;jj<LENGTH;jj++){
 
-                            
-                      int   horizon=top1+forecast_times+1;
-                        /*
-                         
-                         The number of earliest historical points should be systematically dropped off.
-                         
-                         */
-                        
-                            for(int jj=0;jj<6;jj++){
-
-                            for(int weight=0;weight<1;weight++){
+                            for(int weight=0;weight<WEIGHT;weight++){
                                 
                                 
-                                String path_option="/Users/emiao/Desktop/Model_selection/Synthetic/Exp_"+ind+"/MSKF1/Forecast_23/rep_"+rep+"/length"+jj+"/forecast.xls";
+                                String path_option="/Users/emiao/Desktop/sdforecast.xls";
                                 
                                 
                                 int num_file=2;
@@ -93,7 +69,6 @@ import java.util.*;
                                     try {
                                         
                                         Workbook book=Workbook.getWorkbook(new File("/Users/emiao/Desktop/Model_selection/Synthetic/Exp_"+ind+"/Generated_data/replicate_"+rep+"/timeseries.xls"));
-
                                         
                                         Sheet sheet = book.getSheet(0);
                                         
@@ -106,9 +81,7 @@ import java.util.*;
                                                 
                                                 original[i][j] = cell.getContents();
                                                 
-                                                
                                             }
-                                            
                                             
                                         }
                                         
@@ -124,7 +97,6 @@ import java.util.*;
                                                 
                                                 double_array[i - 1][j] = Double.parseDouble(original[i][j]);
                                                 
-                                                
                                             }
                                             
                                         }
@@ -135,22 +107,17 @@ import java.util.*;
                                         Results re=new Results();
                                         CMSKF cmskf=new CMSKF();
                                         WriteExcel we=new WriteExcel();
-                                        NaiveMethod nm=new NaiveMethod();
                                         
                                         int time = 0;
                                         double[][] PoolX = new double[sheet.getRows() - 1][sheet.getColumns()];
                                         double[] Vlaw = new double[Ncs - 1];
                                         double[][] CMSKF_pererr = new double[18][3];
                                         double[][] Yhat = new double[top][Ncs];
-                                        
                                         time = 0;
                                         PoolX = no.normal(double_array, jj, top,  Ncs, top1);
-                                        Vlaw = in.varianceLaw(PoolX,jj,Ncs,top1,extreme);
-                                        
+                                        Vlaw = in.varianceLaw(PoolX,jj,Ncs,top1);
                                         Vars = in.initial_Vars(Vlaw, Ncs);
                                         Dist = in.initial_Dist(PoolX, Vars,Ncs);
-                                        
-                                        
                                         
                                         for (int t = jj; t < top1+1; t++){
                                             for (int j = 0; j < Ncs; j++) {
@@ -175,7 +142,6 @@ import java.util.*;
                                                 for (int t = jj + 1; t < top1+1; t++) {
                                                     
                                                     Dist = bm.bayesian(t, PoolX,Pie,Dist,Vars, top, Ncs);          /* call CMSKF algorithms */
-                                                                            
                                                     Dist = cmskf.cross(t, PoolX,Dist,Vars,Ncs);
                                                     
                                                 }
@@ -186,22 +152,15 @@ import java.util.*;
                                             case 2:
                                                 
                                                 for (int t = jj+1 ; t < top1+1; t++) {
-                                                    
                                                     Dist = bm.bayesian(t,PoolX,Pie,Dist,Vars,top,Ncs);            /* call MSKF algorithm */
                                                 }
                                                 
-                                                
-                                                
                                                 Yhat= re.results(top1,Dist, Ncs,top,Yhat);
-                                                
                                                 break;
-                                                
                                                 
                                         }
                                         
-                                        
                                         book.close();
-                                        
                                         
                                         switch (option) {
                                             case 1:
@@ -209,53 +168,32 @@ import java.util.*;
                                                 
                                                 break;
                                             case 2:
-                                                
                                                 we.appenddata( path_option,  Yhat,PoolX,  length, forecast_times,  Ncs, top1,g);
-                                                
                                                 break;
                                         }
                                         
                                     }catch (Exception e)
                                     
                                     {
-                                        
                                         System.out.println(e);
                                     
-                                    
-                                }
+                                      }
+                                  }
+                               
                            }
                         }
                     }
-                }
-            }
-            }
-    }
-     
-     
-      public static void main(String[] args){
-        Main obj1=new Main();
-        obj1.run(1);
-        obj1.start();
-
-        Main obj2=new Main();
-        obj2.run(2);
-        obj2.start();
-          
-      Main obj3=new Main();
-      obj3.run(3);
-      obj3.start();
-          
-          Main obj4=new Main();
-          obj4.run(4);
-          obj4.start();
-          
-        Main obj5=new Main();
-        obj5.run(5);
-        obj5.start();
-    
-      }
         
+                 }
+    
+            }
+
+        }
+     
  }
+
+
+
      
 
 

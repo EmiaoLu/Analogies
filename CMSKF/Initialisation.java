@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class Initialisation{
     
-   protected double[] varianceLaw(double[][] PoolX, int jj,int Ncs,int top1,double extreme) {
+   protected double[] varianceLaw(double[][] PoolX, int jj,int Ncs,int top1) {
         
         Median me=new Median();
         double[] Vlaw = new double[Ncs];
@@ -37,11 +37,10 @@ public class Initialisation{
             
             for (int i = jj; i < top1+1; i++) {
                 
-                if (PoolX[i][j]!= extreme) {
-                    
+              
                     count++;
                     
-                }
+                
             }
            ten=Math.min(min,count);
             
