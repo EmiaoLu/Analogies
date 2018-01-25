@@ -50,20 +50,32 @@ import java.util.*;
 
         String length = "temp_results";
         
-        
-//        for(int h=15;h<16;h++){
+        /*
+         Number of replicates for the experiments
+         */
         
             for(int rep=1;rep<31;rep++){
                 
                 
-//                    for(int sap=1;sap<51;sap++){
+                /*
+                Number of forecasts for the experiments
+                 */
                 
                     for(int forecast_times=6;forecast_times<7;forecast_times++){
                         
+                        /*
+                        The T point
+                         */
+                        
                         for(int top1=16;top1<17;top1++){
 
+                            
                       int   horizon=top1+forecast_times+1;
-                        
+                        /*
+                         
+                         The number of earliest historical points should be systematically dropped off.
+                         
+                         */
                         
                             for(int jj=0;jj<6;jj++){
 
@@ -162,8 +174,8 @@ import java.util.*;
                                                 
                                                 for (int t = jj + 1; t < top1+1; t++) {
                                                     
-                                                    Dist = bm.bayesian(t, PoolX,Pie,Dist,Vars, top, Ncs);
-                                                    
+                                                    Dist = bm.bayesian(t, PoolX,Pie,Dist,Vars, top, Ncs);          /* call CMSKF algorithms */
+                                                                            
                                                     Dist = cmskf.cross(t, PoolX,Dist,Vars,Ncs);
                                                     
                                                 }
@@ -175,7 +187,7 @@ import java.util.*;
                                                 
                                                 for (int t = jj+1 ; t < top1+1; t++) {
                                                     
-                                                    Dist = bm.bayesian(t,PoolX,Pie,Dist,Vars,top,Ncs);
+                                                    Dist = bm.bayesian(t,PoolX,Pie,Dist,Vars,top,Ncs);            /* call MSKF algorithm */
                                                 }
                                                 
                                                 
