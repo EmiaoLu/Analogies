@@ -31,10 +31,7 @@ public class Initialisation{
         
         
         for (int j = 0; j <Ncs; j++) {
-            //System.out.println();
             
-            //            for(int i=jj;i<top1+1;i++)
-            //                System.out.println(PoolX[i][j]);
             
             count=0;
             
@@ -42,12 +39,11 @@ public class Initialisation{
                 
                 if (PoolX[i][j]!= extreme) {
                     
-                    count++;   ///checking the number of non-empty before forecasting horizon.
+                    count++;
                     
                 }
             }
            ten=Math.min(min,count);
-           // ten=min;
             
             nine=ten-1;
             
@@ -58,12 +54,9 @@ public class Initialisation{
             
             while(count<nine){
                 
-                if (PoolX[k+1][j]!= extreme) {
-                    
+                
                     sum=sum+PoolX[k+1][j];
-                    //System.out.println("Poolx "+PoolX[k+1][j]);
-                    
-                }
+                
                 
                 count++;
                 k++;
@@ -87,12 +80,8 @@ public class Initialisation{
             
             while(count<nine) {
                 
-                if(PoolX[k+1][j]!=extreme){
-                  //  System.out.println("sum "+sum);
                     Buf1[count] = Math.abs(PoolX[k+1][j] - sum);
-             ///   System.out.println("Buf1 "+Buf1[count]);
                     count++;
-                }
                 
                 k++;
             }
@@ -102,26 +91,15 @@ public class Initialisation{
             
                 med1 = me.getMedian(Buf1,nine);
             
-            
-            
-           // System.out.println("med1 "+med1);
-          //  System.out.println();
-
-            ////////////////////////////////////////////////////////for PoolX[t+1][j]-PoolX[t][j]////////////////////////////////////////////
-            
             count=0;
             
             for (int i = jj; i < top1; i++) {
                 
-                if (PoolX[i+1][j]!= extreme && PoolX[i][j]!=extreme) {
-                    
-                    count++;   ///checking the number of non-empty before forecasting horizon.
-                    
-                }
+                
+                    count++;
             }
             
            ten=Math.min(min,count);
-            //ten=min;
             
             nine=ten-1;
             
@@ -137,33 +115,25 @@ public class Initialisation{
 
             while(count<nine) {
                 
-                
-                if(PoolX[k+1][j]!=extreme && PoolX[k][j]!=extreme){
-                    
                     Buf2[count] = Math.abs(PoolX[k+1][j] - PoolX[k][j]);
 
                     count++;
-                }
                 k++;
                 
             }
             
             med2 = me.getMedian(Buf2, nine);
  
-            Vlaw[j] = med1;                     ///Debug this part
+            Vlaw[j] = med1;
             
             if (med1 > med2){
                 Vlaw[j] = med2;
-               // System.out.println("med1 "+med2);
                 
             }else{
-                //System.out.println("med2 "+med1);
 
             }
             
             
-            //System.out.println("Vlaw " +Vlaw[j] );
-
             Vlaw[j] = (Vlaw[j] / 0.6745) * (Vlaw[j] / 0.6745);
 
        }
@@ -173,7 +143,6 @@ public class Initialisation{
               sum = 0.0;
         for (int j = 0; j < Ncs; j++)
             sum = sum + Vlaw[j];
-        // System.out.println(sum);
         sum = sum / Ncs;
         for (int j = 0; j < Ncs; j++) {
             Vlaw[j] = sum * 10;
@@ -190,14 +159,11 @@ public class Initialisation{
         double[] Re = { 1.0, 1.0, 1.0, 101.0 };
         
         for (int j = 0; j < Ncs; j++) {
-            //   System.out.println("Vlaw: "+Vlaw[j]);
             for (int i = 0; i < 4; i++) {
                 Vars[0][i][j] = Re[i] * Vlaw[j];
                 Vars[1][i][j] = Rg[i] * Vlaw[j];
                 Vars[2][i][j] = Rr[i] * Vlaw[j];
-               // System.out.println("var "+Vars[2][i][j]);
             }
-           // System.out.println();
 
         }
         
@@ -205,7 +171,7 @@ public class Initialisation{
         return Vars;
     }
     
-    double[][][] initial_Dist(double[][] PoolX, double[][][] Vars,int Ncs,double extreme) {
+    double[][][] initial_Dist(double[][] PoolX, double[][][] Vars,int Ncs) {
         
         double[][][] Dist = new double[6][4][Ncs];
         
@@ -214,7 +180,6 @@ public class Initialisation{
         
         
         for (int j = 0; j < Ncs; j++) {
-            //  System.out.println();
             
             
             for (int i = 0; i < 4; i++) {
@@ -223,32 +188,24 @@ public class Initialisation{
                 
                 while(count<2){
                     
-                    if(PoolX[ind][j]!=extreme)
-                        
-                    {
+                    
                         Dist[0][i][j] = PoolX[ind][j];
                         
                         count++;
                         
-                    }
                     ind++;
                     
                 }
-                //  System.out.println("Dist "+Dist[0][i][j]);
                 
                 count=1;
                 ind=0;
                 
                 while(count<2){
                     
-                    if(PoolX[ind+1][j]!=extreme&& PoolX[ind][j]!=extreme)
-                    {
-                        //System.out.println(PoolX[ind+1][j]+" "+PoolX[ind][j]);
-                        
+                    
                         Dist[1][i][j] = PoolX[ind+1][j]- PoolX[ind][j];
                         count++;
                         
-                    }
                     ind++;
                 }
                 
@@ -256,7 +213,6 @@ public class Initialisation{
                 Dist[3][i][j] = Vars[2][i][j];
                 Dist[4][i][j] = Vars[2][i][j];
                 Dist[5][i][j] = 0.25;
-                 //System.out.println("initial Dist 2= "+Dist[0][i][j]);
                 
             }
         }

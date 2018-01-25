@@ -13,11 +13,9 @@ import jxl.write.biff.RowsExceededException;
 import java.util.ArrayList;
 
 
-
 public class BayesianMethod{
     
-    
-    protected double[][][] bayesian(int t, double[][] PoolX, double[] Pie,double[][][] Dist, double[][][] Vars,int top,int Ncs,double extreme) {
+    protected double[][][] bayesian(int t, double[][] PoolX, double[] Pie,double[][][] Dist, double[][][] Vars,int top,int Ncs ) {
         double[][] Mi = new double[4][top];
         double[][] Bi = new double[4][top];
         double[][] Vmm = new double[4][top];
@@ -46,14 +44,10 @@ public class BayesianMethod{
         double arg1;
         
         for (int jo = 0; jo < Ncs; jo++) {
-            // System.out.println("POOLX1 in Bayesian: "+PoolX[t][jo]);
             
-            if(PoolX[t][jo]!=extreme){
-                
                 for (int i = 0; i < 4; i++) {
                     
                     Mi[i][t - 1] = Dist[0][i][jo];
-                    //System.out.println("Testing="+Dist[0][i][jo]);
                     Bi[i][t - 1] = Dist[1][i][jo];
                     Vmm[i][t - 1] = Dist[2][i][jo];
                     Vmb[i][t - 1] = Dist[3][i][jo];
@@ -62,33 +56,23 @@ public class BayesianMethod{
                     Vet[i] = Vars[0][i][jo];
                     Vg[i] = Vars[1][i][jo];
                     Vr[i] = Vars[2][i][jo];
-                    // System.out.println("Dist "+i+" "+jo+" "+Vars[2huiqu][i][jo]);
                 }
-                // System.out.println("POOLX in Bayesian: "+PoolX[t][jo]);
-                
-                
-                for (int i = 0; i < 4; i++)
+            
+                for (int i = 0; i < 4; i++){
                     
                     for (int j = 0; j < 4; j++) {
                         
-                        Ei[i][t] = PoolX[t][jo] - Mi[i][t - 1] - Bi[i][t - 1];////i is the state while t is the time index;
-                        
-                        // System.out.println("Ei "+i+" "+t+"   results "+Ei[i][t]);
-                        //   System.out.println(PoolX[t][jo]+"  Mi "+i+" "+t+"   results "+Mi[i][t-1]+" "+Bi[i][t-1]+"="+Ei[i][t]);
-                        
+                        Ei[i][t] = PoolX[t][jo] - Mi[i][t - 1] - Bi[i][t - 1];
                         
                         r11 = Vmm[i][t - 1] + 2 * Vmb[i][t - 1] + Vbb[i][t - 1]+ Vg[j] + Vr[j];
                         r12 = Vmb[i][t - 1] + Vbb[i][t - 1] + Vr[j];
                         r22 = Vbb[i][t - 1] + Vr[j];
                         Ve[i][j] = r11 + Vet[j];
-                        //System.out.println(Ve[i][j]);
                         A1 = r11 / Ve[i][j];
                         A2 = r12 / Ve[i][j];
-                        // System.out.println(Ve[i][j]);
                         
                         Mf[i][j][t] = Mi[i][t - 1] + Bi[i][t - 1] + A1 * Ei[i][t];
                         
-                        // System.out.println("Mf: "+A1);
                         
                         Bf[i][j][t] = Bi[i][t - 1] + A2 * Ei[i][t];
                         Vmmf[i][j][t] = r11 - A1 * A1 * Ve[i][j];
@@ -102,27 +86,25 @@ public class BayesianMethod{
                             Vbbf[i][j][t] = 0.0;
                         
                     }
-                //  System.out.println();
+                }
                 invK = 0;
-                for (int ii = 0; ii < 4; ii++)
+                for (int ii = 0; ii < 4; ii++){
                     for (int jj = 0; jj < 4; jj++) {
                         arg = -Math.pow((PoolX[t][jo] - Mi[ii][t - 1] - Bi[ii][t - 1]), 2)/ (2 * Ve[ii][jj]);
                         arg2 = 2 * 3.14159265 * Ve[ii][jj];
                         invK = invK + Q[ii][t - 1] * Pie[jj] * Math.pow(Math.E, arg) / Math.sqrt(arg2);
-                        // System.out.println(invK);///WRONG IT CAN'T BE ZEROS
                     }
-                // System.out.println();
-                
-                for (int i = 0; i < 4; i++)
+                }
+            
+                for (int i = 0; i < 4; i++){
                     for (int j = 0; j < 4; j++) {
                         arg = -Math.pow((PoolX[t][jo] - Mi[i][t - 1] - Bi[i][t - 1]), 2)/ (2 * Ve[i][j]);
                         arg2 = 2 * 3.14 * Ve[i][j];
                         P[i][j][t] = Q[i][t - 1] * Pie[j] * Math.pow(Math.E, arg)/ (Math.sqrt(arg2) * invK);
-                        // System.out.println(P[i][j][t]);
                         
                     }
+                }
                 
-                // ///Compressing posterior densities from N*N into N
                 for (int j = 0; j < 4; j++) {
                     Q[j][t] = 0.0;
                     Bi[j][t] = 0.0;
@@ -132,22 +114,18 @@ public class BayesianMethod{
                     Vbb[j][t] = 0.0;
                     for (int i = 0; i < 4; i++) {
                         Q[j][t] = Q[j][t] + P[i][j][t];
-                        // System.out.println(Q[j][t]);
                     }
                     for (int i = 0; i < 4; i++) {
                         Bi[j][t] = Bi[j][t] + (P[i][j][t] * Bf[i][j][t]) / Q[j][t];
                         Mi[j][t] = Mi[j][t] + (P[i][j][t] * Mf[i][j][t]) / Q[j][t];
-                        // System.out.println(Mi[j][t]);
                     }
                     for (int i = 0; i < 4; i++) {
                         arg1 = Mf[i][j][t] - Mi[j][t];
                         arg2 = Bf[i][j][t] - Bi[j][t];
                         Vmm[j][t] = Vmm[j][t] + P[i][j][t]* (Vmmf[i][j][t] + arg1 * arg1) / Q[j][t];
                         Vmb[j][t] = Vmb[j][t] + P[i][j][t]* (Vmbf[i][j][t] + arg1 * arg2) / Q[j][t];
-                        // System.out.println(Vmbf[i][j][t]);
                         Vbb[j][t] = Vbb[j][t] + P[i][j][t] * (Vbbf[i][j][t] + arg2 * arg2) / Q[j][t];
                         
-                        // System.out.println(Vmb[j][t]);
                     }
                     for (int i = 0; i < 4; i++) {
                         Dist[0][i][jo] = Mi[i][t];
@@ -156,30 +134,15 @@ public class BayesianMethod{
                         Dist[3][i][jo] = Vmb[i][t];
                         Dist[4][i][jo] = Vbb[i][t];
                         Dist[5][i][jo] = Q[i][t];
-                       // System.out.println("output from bayes"+Dist[3][i][jo]);
                         
                     }
                 }
                 
-            }}
+            }
         return Dist;
         
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
 }

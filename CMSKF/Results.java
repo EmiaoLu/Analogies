@@ -13,10 +13,9 @@ import jxl.write.biff.RowsExceededException;
 import java.util.ArrayList;
 
 
-
 public class Results{
     
-    protected double[][] results(int top1, double[][][] Dist,int Ncs,int top,double[][] Yhat, double extreme) {
+    protected double[][] results(int top1, double[][][] Dist,int Ncs,int top,double[][] Yhat) {
         
         double BigT;
         double BigS;
@@ -36,29 +35,10 @@ public class Results{
             count1=2;
             count2=1;
 
-            
             for(int t=top1+1;t<top;t++){
-                
-
-                
-                if(Yhat[top1][j]==extreme){
-                    
-                    Yhat[t][j]=BigT+count1*BigS;
-                  //  System.out.println("  missing "+count1+ " pred "+Yhat[t][j]);
-
-                    count1=count1+1;
-                    
-                    
-                }else{
                     Yhat[t][j]=BigT+count2*BigS;
-                     //System.out.println(" without missing "+count2+ " pred "+Yhat[t][j]);
                     count2=count2+1;
-                    
-                    
-
-                }
-
-                
+              
             }
             
         }

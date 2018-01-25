@@ -47,7 +47,6 @@ public class Median{
         getmedian = s[ind];
         if ((n / 2) * 2 == n)
             getmedian = (s[ind-1] + s[ind]) / 2;
-        //System.out.println("median"+getmedian);
         return getmedian;
     }
     

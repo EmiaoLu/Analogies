@@ -48,7 +48,6 @@ public class WriteExcel{
     
     
     
-///void appenddata(String path_option, double[][] Yhat,double[][] PoolX, String length,int forecast_times, int Ncs,int top1)
   protected void appenddata(String path_option, double[][] Yhat,double[][] PoolX, String length,int forecast_times, int Ncs,int top1,int g) {
 {
     
@@ -59,25 +58,18 @@ public class WriteExcel{
             
             Workbook existingbook = Workbook.getWorkbook(new File(path_option));
             WritableWorkbook copy = Workbook.createWorkbook(new File(path_option), existingbook);
-            WritableSheet sheet = copy.getSheet(length);// //individual
-            // sheet;
+            WritableSheet sheet = copy.getSheet(length);
             
             
             int row;
             int col;
             
             row=sheet.getRows();
-
-      
-          //  col=sheet.getColumns();
-           // System.out.println("row "+row);
             existingbook.close();
             
-           
 
             int k=0;
 
-            
             for (int j = 0; j <Ncs; j++) {
 
             for (int i = top1+1; i < top1+1+forecast_times; i++) {
@@ -87,8 +79,6 @@ public class WriteExcel{
                     k++;
                     
                 }
-               // System.out.println("number"+Ncs);
-                
                 
             }
             
@@ -98,10 +88,7 @@ public class WriteExcel{
                 
                     Number num1 = new Number( 0, j+row, num_Original[j]);
                   Number num2 = new Number( 1, j+row, num_Yhat[j]);
-                
-                
-                // System.out.println(number[j]);
-                
+                                
                 sheet.addCell(num1);
                 sheet.addCell(num2);
                 
